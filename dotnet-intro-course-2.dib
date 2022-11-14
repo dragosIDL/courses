@@ -1,0 +1,283 @@
+#!markdown
+
+In the previous course we stopped short of classes, so now we are going to go through them in a bit more detail.
+
+#!markdown
+
+## CLASSES 
+
+Code has to live somewhere and that place is called a class. Unlike other languages, C# does not have functions as first class elements, but rather anything must be part of a class in one way or another.
+
+#!csharp
+
+// we can define an empty class like so
+public class MyFirstClass
+{
+    
+}
+
+#!csharp
+
+// Classes can be partial classes 
+
+// Defining the same class twice gives an error, but we can use partial classes to get around this
+// public class Person { }
+// public class Person { }
+
+public partial class Person 
+{
+    public string Name { get; set; }
+}
+
+public partial class Person
+{
+    public int Age { get; init; }
+}
+
+var person = new Person() { Name = "John", Age = 20 }; // we have access to both properties, even though they are defined in two different classes, but because they are marked as partial, it behaves like a single class.
+
+#!markdown
+
+This can be useful in situations where a class implements functionality related to different areas, Like equality, serialization, source generators, etc. Each related part can be moved into it's own partial class, improving the developer experience, as well as enabling certain features (generating source for the class).
+The partial class can then be separated into their own files. 
+At compile time, the partial class is combined into a single class, so there is no difference between them after compilation.
+
+#!markdown
+
+A class can contain different kinds of things
+
+#!markdown
+
+### Properties
+
+#!csharp
+
+public class Person
+{
+    public string Name { get; } // this is a readonly property
+    public int Age { get; set; } // this is a property that can be read and set on the object
+    public string PhoneNumber { get; init; } // this is a property that can be read, and can only be initialized (once).
+}
+
+//var person = new Person() { Name = "abc" }; // error 
+
+var person = new Person() { Age = 20, PhoneNumber = "12345" }; // Name would be null in this case, as the property Name cannot be set
+
+person.Age = 21; // we can change the Age to 21
+
+person
+
+#!csharp
+
+person.PhoneNumber = "1235678"; // error, we cannot assign the PhoneNumber to another value;
+
+#!csharp
+
+public class Person
+{
+    public string Name { get; } // a property that has only a getter can only be initialized in the constructor.
+
+    public Person(string name)
+    {
+        Name = name;
+    }
+}
+
+var person = new Person("John");
+person
+
+#!markdown
+
+### Methods
+
+#!csharp
+
+public class Person
+{
+    public string Name { get; } // a property that has only a getter can be initialized only in the constructor.
+
+    public Person(string name)
+    {
+        Name = name;
+    }
+
+    public string Greeting() // instance methods
+    {
+        return $"Hello, I'm {Name}";
+    }
+
+    public static string Greeting(string name) // static methods, that can only be invoked using the class name instead of the object
+    {
+        return $"Hello, I'm {name}";
+    }
+}
+
+var name = "John";
+var person = new Person(name);
+
+#!csharp
+
+person.Greeting()
+
+#!csharp
+
+person.Greeting(name); // error Member 'Person.Greeting(string)' cannot be accessed with an instance reference; qualify it with a type name instead
+
+#!csharp
+
+Person.Greeting(name)
+
+#!markdown
+
+### Operators
+
+#!markdown
+
+#### Conversion operators
+
+#!csharp
+
+public class Person
+{
+    public string Name { get;init; }
+    public static implicit operator string(Person person) => person.Name;
+    public static explicit operator Person(string name) => new Person(){ Name = name };
+}
+
+var person = new Person() { Name = "John" };
+
+#!csharp
+
+string personAsString = person;
+personAsString
+
+#!csharp
+
+var name = "John";
+Person john = name; //Error: (2,15): error CS0266: Cannot implicitly convert type 'string' to 'Person'. An explicit conversion exists (are you missing a cast?)
+
+#!csharp
+
+var name = "John";
+Person john = (Person)name; // a string can be "casted" to Person using the explicit operator that we defined on the class.
+john
+
+#!markdown
+
+#### Other operators
+
+#!csharp
+
+// We can also use implicit and we wouldn't have to specify (Person)name for the conversion to occurr.
+public class Person
+{
+    public string Name { get;init; }
+    public static implicit operator string(Person person) => person.Name;
+    public static implicit operator Person(string name) => new Person(){ Name = name };
+}
+
+Person john = "John";
+john
+
+#!markdown
+
+### Events
+
+#!csharp
+
+public class Person
+{
+    public int Id { get; init; }
+    public string Name { get; private set; }
+    
+    public event EventHandler<string> OnNameChanged;
+    
+    public Person(int id, string name)
+    {
+        Id = id;
+        Name = name;
+    }
+
+    public void ChangeName(string newName)
+    {
+        Name = newName;
+        OnNameChanged?.Invoke(this, newName);
+    }
+}
+
+var person1 = new Person(1, "John");
+var person2 = new Person(2, "Alex");
+
+void PrintNameChange(object instance, string newName)
+{
+    if(instance is Person p)
+    {
+        Console.WriteLine($"The person with id {p.Id} changed the name to {newName}");
+    }
+}
+
+// subscribe to OnNameChanged event 
+person1.OnNameChanged += PrintNameChange;
+person2.OnNameChanged += PrintNameChange;
+
+person1.ChangeName("John2");
+person2.ChangeName("Alex2");
+
+#!csharp
+
+// unsubscribe to OnNameChanged event
+// it is important to unsubscribe from events when the object is no longer required to avoid memory leaks.
+person1.OnNameChanged -= PrintNameChange;
+
+person1.ChangeName("John2"); // there is no output, because PrintNameChange is no longer called.
+
+#!markdown
+
+We can have more complex event arguments with generic types.
+
+#!csharp
+
+public class NameChangedArguments
+{
+    public string OldName { get; }
+    public string NewName { get; }
+    public NameChangedArguments(string oldName, string newName)
+    {
+        OldName = oldName;
+        NewName = newName;
+    }
+}
+
+public class Person
+{
+    public int Id { get; init; }
+    public string Name { get; private set; }
+    
+    public event EventHandler<NameChangedArguments> OnNameChanged;
+    
+    public Person(int id, string name)
+    {
+        Id = id;
+        Name = name;
+    }
+
+    public void ChangeName(string newName)
+    {
+        var oldName = Name;
+        Name = newName;
+        OnNameChanged?.Invoke(this, new NameChangedArguments(oldName, newName));
+    }
+}
+
+void PrintNameChange(object instance, NameChangedArguments args)
+{
+    Console.WriteLine($"{args.OldName} changed their name to {args.NewName}");
+}
+
+var person = new Person(1, "John");
+
+person.OnNameChanged += PrintNameChange;
+
+person.ChangeName("Alex");
+
+person.OnNameChanged -= PrintNameChange;
