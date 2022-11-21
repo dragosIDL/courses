@@ -1,0 +1,18 @@
+#!markdown
+
+```csharp
+(string, string) -> string
+public string DoSomething(string a, string b) { ... } 
+
+string -> (bool, int)
+public (bool success, int value) TryParse(string stringNumber) { ... }
+
+(int, string, object) -> Result
+public Result DoSomethingWithParameters(int a, string b, object c) { ... }
+
+```
+
+You might have also noticed that we have parentheses around the arguments in quite a few places. 
+Those are just normal tuples.
+ 
+Essentially you can think of a function with multiple parameters, as having a just a single parameter. A tuple

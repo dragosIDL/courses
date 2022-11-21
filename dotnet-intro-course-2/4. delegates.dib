@@ -1,0 +1,167 @@
+#!markdown
+
+A delegate is a type that represents references to methods with a particular parameter list and return type.
+https://learn.microsoft.com/en-US/dotnet/csharp/programming-guide/delegates/
+
+#!csharp
+
+// we can define our own delegate like
+public delegate string Print(string message);
+
+#!csharp
+
+// now we can make an instace of Print (the type) pointing to a function
+public static string Default(string message) 
+{
+    return message;
+}
+
+Print print = Default;
+print("this a the message")
+
+#!csharp
+
+public static string PrintWithInfo(string message)
+{
+    return $"INFO({DateTimeOffset.UtcNow}) - {message}";
+}
+
+Print print = PrintWithInfo;
+print("this a the message")
+
+#!markdown
+
+Our Print delegate can be assigned to any function, that accepts a string argument, and returns a string.
+Essentially any it's signature is :
+
+```csharp
+string -> string
+```
+
+This way of representing functions is similar with Fsharp, and I think it is concise enough to use in Csharp as well.
+The first `string` represents the argument and the last `string` represents the output.
+
+[Read more about signatures here](/dotnet-intro-course-2/simplified_signature.dib)
+
+#!markdown
+
+By doing this we can now talk about functions with a certain signature using a common type.
+This can be used successfully to inject code in methods, similar to the strategy pattern, or more commonly dependency injection.
+
+#!csharp
+
+public class Person
+{
+    public string Name { get; init; }
+    public string LastName { get; init; }
+}
+
+public delegate string NameFormatter(Person person);
+
+public string SayHello(Person person, NameFormatter nameFormatter)
+{
+    return $"Hello, {nameFormatter(person)}! Nice to meet you!";
+}
+
+#!csharp
+
+var john = new Person { Name = "John", LastName = "Smith" };
+
+#!csharp
+
+public string FirstNameFormatter(Person person) 
+{
+    return person.Name;
+}
+SayHello(john, FirstNameFormatter)
+
+#!csharp
+
+public string FullNameFormatter(Person person)
+{
+    return $"{person.Name} {person.LastName}";
+}
+SayHello(john, FullNameFormatter)
+
+#!markdown
+
+But it can get annoying to define a delegate - a new type - for every single function that you might want to pass along.
+
+In order to make it easier to pass functions along, .NET has a few already defined delegates
+
+`Func` and `Action`
+
+#!csharp
+
+// Action is defined as
+public delegate void Action<T>(T argument);
+
+// Func is defined as 
+public delegate TResult Func<T1, TResult>(T1 argument);
+
+#!markdown
+
+We can rewrite our SayHello function now to work with these delegates instead of our own NameFormatter
+
+#!csharp
+
+// public string SayHello(Person person, NameFormatter nameFormatter)
+// {
+//     return $"Hello, {nameFormatter(person)}! Nice to meet you!";
+// }
+
+public string SayHello(Person person, Func<Person, string> nameFormatter)
+{
+    return $"Hello, {nameFormatter(person)}! Nice to meet you!";
+}
+
+Func<Person, string> nameFormatter = FullNameFormatter;
+SayHello(john, nameFormatter)
+
+#!markdown
+
+There isn't much difference between the methods. `NameFormatter` has been replaced with `Func<Person, string>` which if we check their signatures match to eachother
+
+```csharp
+NameFormatter: Person -> string
+Func<Person, string>: Person -> string
+```
+
+#!markdown
+
+As you might imagine, we could have more complex functions, with multiple arguments, so Func or Action with one parameter, is not enough for all cases.
+
+You have more options
+
+https://learn.microsoft.com/en-us/dotnet/api/system.func-2?view=net-7.0
+
+Func\<T\> : `void -> T` // no arguments and returns T
+
+Func\<T, TResult\> : `T -> TResult`
+
+Func\<T1, T2, TResult\> : `(T1, T2) -> TResult`
+
+...
+
+https://learn.microsoft.com/en-us/dotnet/api/system.action?view=net-7.0
+
+
+Action : `void -> void` // no arguments no output
+
+Action\<T\> : `T -> void`
+
+
+Action\<T1, T2\>: `(T1, T2) -> void`
+
+...
+
+#!markdown
+
+Of course they didn't stop at two, or three arguments. We everything until here
+
+Func\<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16, TResult\>: `(T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16) -> TResult` 
+
+Action\<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16\>: `(T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16) -> void` 
+
+
+And I agree with them. This is enough. If you find yourself needing `T17`, I am sorry, but of course, you can define your own Func delegate that matches that signature as well

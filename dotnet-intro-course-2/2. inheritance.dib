@@ -1,0 +1,39 @@
+#!csharp
+
+public abstract partial class Animal
+{
+    public string Name {get;init;}
+}
+
+public partial class Dog : Animal
+{
+
+}
+
+public partial class Cat : Animal
+{
+
+}
+
+#!csharp
+
+public partial class Animal
+{
+    public virtual void Speak()
+    {
+
+    }
+}
+
+public partial class Dog : Animal
+{
+    public override void Speak()
+    {
+        Console.WriteLine("Woof");
+    }
+}
+
+var dog = new Dog()
+{
+    Name = "max"
+};
