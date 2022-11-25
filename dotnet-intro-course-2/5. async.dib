@@ -1,0 +1,22 @@
+#!markdown
+
+Async programming is a way of freeing up resources when IO, or CPU bound operations are used.
+
+Overview of the asynchronous model
+
+The core of async programming is the Task and Task\<T\> objects, which model asynchronous operations. They are supported by the async and await keywords. The model is fairly simple in most cases:
+
+* For I/O-bound code, you await an operation that returns a Task or Task<T> inside of an async method.
+* For CPU-bound code, you await an operation that is started on a background thread with the Task.Run method.
+
+The await keyword is where the magic happens. It yields control to the caller of the method that performed await, and it ultimately allows a UI to be responsive or a service to be elastic. While there are ways to approach async code other than async and await, this article focuses on the language-level constructs.
+
+#!csharp
+
+public async Task<string> DoSomeWork()
+{
+    await Task.Delay(1000);
+    return "abc";
+}
+
+await DoSomeWork()

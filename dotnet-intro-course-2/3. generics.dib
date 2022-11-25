@@ -1,0 +1,103 @@
+#!markdown
+
+## Generic Types 
+
+A generic type is a type that can defines a set of operations independent of the type used to represent the data. 
+
+An example of this would be a List.
+
+A List is generally defined by a set of operations like
+
+Add
+Remove
+Insert 
+GetElementAt or index
+
+As you can see this operations don't actually tell you wether the data you are accessing is an integer, string, or a complex object.
+
+#!csharp
+
+// Without a generic type we can define a list as 
+public class CustomList 
+{
+    public List<object> elements = new List<object>();
+
+    public void Add(object element) => elements.Add(element);
+    public void Remove(object element) => elements.Remove(element);
+    public void Insert(object element, int index) => elements.Insert(index, element);
+
+    public object this[int index] => elements[index];
+
+    public override string ToString() => elements.ToString();
+}
+
+#!csharp
+
+var customList = new CustomList();
+customList.Add(1);
+customList.Add(2);
+customList
+
+#!csharp
+
+// The problem with this implementation is that we have no way to safe guard what kind of elements go into the list.
+// So we can add strings alongside ints because the underlying structure is object.
+
+customList.Add("abc");
+customList
+
+#!markdown
+
+We can change the CustomList to be a generic type instead, which guarantees that only the specified type is added in the list.
+
+A generic type is defined `Name<T>` where Name is the Name of the type, and `T` in angle brackets represents our generic type argument
+
+```csharp
+public class Name<T> { }
+
+var intName = new Name<int>();
+var stringName = new Name<string>();
+```
+
+Even though `intName` and `stringName` are both of type `Name`, they are generic over a different parameter `int` and `string` which essentially turns them into different types.
+
+#!markdown
+
+Let's define CustomList in a generic way now.
+
+#!csharp
+
+public class CustomList<T> 
+{
+    public List<T> elements = new List<T>();
+
+    public void Add(T element) => elements.Add(element);
+    public void Remove(T element) => elements.Remove(element);
+    public void Insert(T element, int index) => elements.Insert(index, element);
+
+    public T this[int index] => elements[index];
+
+    public override string ToString() => elements.ToString();
+}
+
+#!csharp
+
+using System.Text.Json;
+
+var integerList = new CustomList<int>();
+integerList.Add(1);
+integerList.Add(2);
+integerList
+
+#!csharp
+
+var stringList = new CustomList<string>();
+stringList.Add("value1");
+stringList.Add("value2");
+stringList
+
+#!csharp
+
+// more importantly we cannot add a string into an int list or vice versa
+integerList.Add("value1"); // error
+stringList.Add(1); // error

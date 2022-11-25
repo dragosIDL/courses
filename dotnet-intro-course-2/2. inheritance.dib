@@ -1,39 +1,43 @@
 #!csharp
 
-public abstract partial class Animal
+public abstract class Animal
 {
-    public string Name {get;init;}
+    public string Name { get; init; }
+    public abstract string Speak();
 }
 
-public partial class Dog : Animal
+public class Dog : Animal
 {
-
+    public override string Speak() => "Woof";
 }
 
-public partial class Cat : Animal
+public class Cat : Animal 
 {
+    public override string Speak() => "Meow";
+}
 
+var dog = new Dog() { Name = "max" };
+var cat = new Cat() { Name = "maxime" };
+
+SpeakToConsole(dog);
+SpeakToConsole(cat);
+
+public void SpeakToConsole(Animal animal) 
+{
+    Console.WriteLine(animal.Speak());
 }
 
 #!csharp
 
-public partial class Animal
+public abstract class Dog
 {
-    public virtual void Speak()
-    {
-
-    }
+    public virtual string Bark() => "Woof";
 }
 
-public partial class Dog : Animal
+public class Husky : Dog 
 {
-    public override void Speak()
-    {
-        Console.WriteLine("Woof");
-    }
+    public override string Bark() => "WOOOOOOFFF";
 }
 
-var dog = new Dog()
-{
-    Name = "max"
-};
+Dog dog = new Husky();
+dog.Bark()

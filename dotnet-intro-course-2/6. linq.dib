@@ -1,0 +1,75 @@
+#!markdown
+
+LINQ or Language Integrated Query is represented by a set of extensions methods which generalizes common functionality implemented on queryable data such as Lists.
+
+#!csharp
+
+var list = new List<int> 
+{
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+};
+
+#!markdown
+
+There are a bunch of operations that we usually do with lists, and all of them would require some form of iteration
+
+#!csharp
+
+//Let's take as an example a sum
+int sum = 0;
+foreach(var element in list)
+{
+    sum += element;
+}
+Console.WriteLine("The sum is: " + sum);
+
+#!csharp
+
+list.Sum()
+
+#!markdown
+
+Some more useful functions are Select, Where, Aggregate, SelectMany
+
+#!csharp
+
+// SELECT - Transforms each element of a list into another thing based on a given function
+
+double Pow2(int value) => Math.Pow(value,2);
+
+list.Select(el => Pow2(el)).ToList()
+
+#!csharp
+
+// WHERE - Filters elements of a list, and returns only the elements that matched the given function
+
+list.Where(el => el % 2 == 0).ToList()
+
+#!csharp
+
+// AGGREGATE - Flattens a list into a single element based on a state and each element
+string state = "";
+list.Aggregate(state,  (state, element) => state + element)
+
+#!csharp
+
+// SELECTMANY - Flattens a list of lists into a single list
+
+#!csharp
+
+var listOfLists = new List<List<int>>
+{
+    new List<int> { 1, 2,},
+    new List<int> { 3, 4 }
+};
+
+listOfLists.SelectMany(list => list).ToList()
+// Equivalent to 
+
+#!csharp
+
+List<int> state = new List<int>();
+foreach(var list in listOfLists)
+    foreach(var element in list)
+        state.Add(element);
+state
