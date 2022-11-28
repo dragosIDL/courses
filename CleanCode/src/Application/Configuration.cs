@@ -1,5 +1,8 @@
 ﻿using Domain.Configure;
-using Integrations;
+
+using Integrations.HttpPokeApi;
+using Integrations.DotnetPokeApi;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -10,7 +13,8 @@ public static class Configuration
     {
         services.AddDomain();
 
-        services.AddPokeApi();
+        services.AddHttpPokeApi();
+        //services.AddDotnetPokeApi();
 
         return services;
     }
