@@ -1,0 +1,15 @@
+#!markdown
+
+What is dependency injection (dependency inversion)?
+
+It refers to the letter D in SOLID.
+
+This principle says that "Classes should depended on abstraction but not on concretion".
+
+* A dependency refers to any parameters that we accept in the constructor, or in a method.
+
+* An abstraction is a general signature of a process, which may include methods and properties, but without any specific implementation. In C# we do this by using Interfaces or Abstract classes.
+
+* A concretion refers to the class that implements the functionality defined in the Interface or Abstract class.
+
+From the principle we get that all our dependencies should come in the form of abstractions.
