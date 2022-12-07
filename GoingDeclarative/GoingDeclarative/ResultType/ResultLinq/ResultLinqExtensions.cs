@@ -1,6 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
-namespace Result1;
+﻿using GoingDeclarative.ResultType;
+
+using System;
+
+namespace GoingDeclarative;
 
 public static class ResultLinqExtensions
 {
@@ -14,7 +16,7 @@ public static class ResultLinqExtensions
     public static Result<TR> SelectMany<T, TR>(
         this Result<T> input,
         Func<T, Result<TR>> binder)
-    {       
+    {
         return input.Bind(binder);
     }
 
