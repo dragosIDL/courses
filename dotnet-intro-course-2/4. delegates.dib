@@ -29,6 +29,14 @@ public static string PrintWithInfo(string message)
 Print print = PrintWithInfo;
 print("this a the message")
 
+#!csharp
+
+public delegate string Something(string a);
+Something a = PrintWithInfo;
+
+a("abc");
+a.Invoke("abc");
+
 #!markdown
 
 Our Print delegate can be assigned to any function, that accepts a string argument, and returns a string.
@@ -116,7 +124,16 @@ public string SayHello(Person person, Func<Person, string> nameFormatter)
 }
 
 Func<Person, string> nameFormatter = FullNameFormatter;
-SayHello(john, nameFormatter)
+
+FullNameFormatter(new Person());
+nameFormatter(new Person());
+
+SayHello(john, nameFormatter);
+
+NameFormatter a = FullNameFormatter;
+Func<Person, string> b = FullNameFormatter;
+
+Func<Person, string> q = a;
 
 #!markdown
 

@@ -1,0 +1,6 @@
+#!csharp
+
+public interface INumber<T>
+{
+    static abstract T Zero {get;}
+}

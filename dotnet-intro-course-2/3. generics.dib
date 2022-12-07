@@ -56,7 +56,11 @@ A generic type is defined `Name<T>` where Name is the Name of the type, and `T` 
 public class Name<T> { }
 
 var intName = new Name<int>();
-var stringName = new Name<string>();
+var stringName = new Name<string>();```
+
+```csharp
+// not allowed
+var genericName = new Name<T>();
 ```
 
 Even though `intName` and `stringName` are both of type `Name`, they are generic over a different parameter `int` and `string` which essentially turns them into different types.
@@ -81,8 +85,6 @@ public class CustomList<T>
 }
 
 #!csharp
-
-using System.Text.Json;
 
 var integerList = new CustomList<int>();
 integerList.Add(1);

@@ -109,6 +109,10 @@ Person.Greeting(name)
 
 ### Operators
 
+#!csharp
+
+https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/
+
 #!markdown
 
 #### Conversion operators
@@ -118,11 +122,13 @@ Person.Greeting(name)
 public class Person
 {
     public string Name { get;init; }
+    
     public static implicit operator string(Person person) => person.Name;
     public static explicit operator Person(string name) => new Person(){ Name = name };
 }
 
 var person = new Person() { Name = "John" };
+person.GetType()
 
 #!csharp
 
@@ -152,10 +158,16 @@ public class Person
     public string Name { get;init; }
     public static implicit operator string(Person person) => person.Name;
     public static implicit operator Person(string name) => new Person(){ Name = name };
+    public static implicit operator Person(int nr) => new Person(){ Name = nr.ToString() };
+
+    public static Person operator+(Person p, Person p2) => p.Name + p2.Name;
 }
 
-Person john = "John";
-john
+Person john = "John"; // -> new Person() {Name = name};
+Person alex = "Alex";
+Person one = 1;
+
+john + alex + one
 
 #!markdown
 
@@ -190,9 +202,15 @@ void PrintNameChange(object instance, string newName)
 {
     if(instance is Person p)
     {
+        var a = (Person)instance;
         Console.WriteLine($"The person with id {p.Id} changed the name to {newName}");
     }
+    else{
+        Console.WriteLine("this is something else");
+    }
 }
+
+PrintNameChange(1, "abc");
 
 // subscribe to OnNameChanged event 
 person1.OnNameChanged += PrintNameChange;

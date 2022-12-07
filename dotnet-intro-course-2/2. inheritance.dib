@@ -4,10 +4,19 @@ public abstract class Animal
 {
     public string Name { get; init; }
     public abstract string Speak();
+    public void Do ()
+    {
+        
+    }
 }
 
 public class Dog : Animal
 {
+    public Dog() : base()
+    {
+
+    }
+
     public override string Speak() => "Woof";
 }
 
@@ -27,17 +36,70 @@ public void SpeakToConsole(Animal animal)
     Console.WriteLine(animal.Speak());
 }
 
+#!markdown
+
+Subclasses inheriting from classes that have define virtual methods, can choose to override them. 
+
 #!csharp
 
-public abstract class Dog
+public interface IDog
 {
-    public virtual string Bark() => "Woof";
+    public string Bark();
 }
+
+public class Dog : IDog
+{
+    protected string Name {get;}
+    public virtual string Bark() => "Woof123";
+    string IDog.Bark() => "Woof";
+}
+
 
 public class Husky : Dog 
 {
     public override string Bark() => "WOOOOOOFFF";
 }
 
+Dog genericDog = new Dog();
+Console.WriteLine(genericDog.Bark());
+
+IDog g = genericDog;
+Console.WriteLine(g.Bark());
+
 Dog dog = new Husky();
-dog.Bark()
+Console.WriteLine(dog.Bark());
+
+#!csharp
+
+public interface ILogger
+{
+    public event EventHandler<string> O;
+    public string Name { get; }
+    public void Log(string logLevel, string mesage);
+
+    public void LogInfo(string message) {
+        Log("info", message);
+    }
+    public void LogError(string message) {
+        Log("error", message);
+    }
+}
+
+public class L : ILogger
+{
+    public event EventHandler<string> O;
+    public string Name { get; set; }
+    public void Log(string logLevel, string message) {
+        Console.WriteLine($"{logLevel} - {message}");
+    }
+}
+
+var l = new L() { Name = "file" };
+
+l.Log("err", "def");
+
+ILogger lInterface = l;
+
+lInterface.Log("ashta", "ashtash");
+lInterface.LogInfo("def");
+lInterface.LogError("abashtc");

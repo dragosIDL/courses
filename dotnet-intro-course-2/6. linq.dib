@@ -37,13 +37,18 @@ Some more useful functions are Select, Where, Aggregate, SelectMany
 
 double Pow2(int value) => Math.Pow(value,2);
 
-list.Select(el => Pow2(el)).ToList()
+list.Select(el => Pow2(el)).ToList();
+new List<string>{}.Select(el => el);
 
 #!csharp
 
 // WHERE - Filters elements of a list, and returns only the elements that matched the given function
 
-list.Where(el => el % 2 == 0).ToList()
+list.Where(el => el % 2 == 0).ToList();
+
+// 10 / 3;
+// 10 % 3
+// 10.0 / 3
 
 #!csharp
 

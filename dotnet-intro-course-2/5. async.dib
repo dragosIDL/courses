@@ -15,8 +15,31 @@ The await keyword is where the magic happens. It yields control to the caller of
 
 public async Task<string> DoSomeWork()
 {
-    await Task.Delay(1000);
+    // try
+    // {
+        await Task.Delay(1000);
+    // }
+    // catch(Exception)
+    // {
+    //     return string.Empty;
+    // }
+
+    Task<string> t = Task.FromResult<string>("abc");
+
     return "abc";
 }
 
-await DoSomeWork()
+public async Task<(bool success, string value, Exception? ex)> DoSomeWork1()
+{
+    try
+    {
+        await Task.Delay(1000);
+        return (true, "abc", null);
+    }
+    catch(Exception ex)
+    {
+        return (false, string.Empty, ex);
+    }
+}
+
+await DoSomeWork1()
